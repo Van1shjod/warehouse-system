@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Admin Panel - Warehouse System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <h2>Адмін Панель</h2>
+            <div class="nav-right">
+                <a href="/dashboard" class="btn btn-small">Dashboard</a>
+                <a href="/logout" class="btn btn-small btn-danger">Вихід</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showAdminTab('users')">Користувачі</button>
+            <button class="tab-btn" onclick="showAdminTab('activity')">Активність</button>
+            <button class="tab-btn" onclick="showAdminTab('create')">Створити акаунт</button>
+        </div>
+
+        <!-- Таб користувачів -->
+        <div id="admin-users" class="admin-tab-content fade-in">
+            <h2>Користувачі системи</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Логін</th>
+                            <th>Роль</th>
+                            <th>Статус</th>
+                            <th>Картонів</th>
+                            <th>Реєстрація</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">
+                                <div class="spinner"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Таб активності -->
+        <div id="admin-activity" class="admin-tab-content" style="display: none;">
+            <div style="display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem;">
+                <!-- Список користувачів ліворуч -->
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Користувачі</h3>
+                    <div id="users-list" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="padding: 1rem; text-align: center;">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Журнал активності праворуч -->
+                <div>
+                    <h3 style="margin-bottom: 1rem;" id="activity-title">Вся активність</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Час</th>
+                                    <th>Користувач</th>
+                                    <th>Дія</th>
+                                    <th>Деталі</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activity-table-body">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 2rem;">
+                                        <div class="spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Таб створення акаунтів -->
+        <div id="admin-create" class="admin-tab-content" style="display: none;">
+            <h2>Створити новий акаунт</h2>
+            <div class="form-card">
+                <form id="create-account-form">
+                    <div class="form-group">
+                        <label>Логін</label>
+                        <input type="text" id="account-username" required autocomplete="off" placeholder="Введіть логін">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="password" id="account-password" required autocomplete="new-password" placeholder="Введіть пароль">
+                    </div>
+                    <div class="form-group">
+                        <label>Роль</label>
+                        <select id="account-role" class="form-select">
+                            <option value="user">User (Звичайний користувач)</option>
+                            <option value="admin">Admin (Повний доступ)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Створити акаунт</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+</body>
+</html>

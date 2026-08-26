@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Lider Panel - Warehouse System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <h2>📊 Lider Панель</h2>
+            <div class="nav-right">
+                <a href="/dashboard" class="btn btn-small">🏠 Dashboard</a>
+                <a href="/logout" class="btn btn-small btn-danger">🚪 Вихід</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showLiderTab('pallets')">📦 Палети</button>
+            <button class="tab-btn" onclick="showLiderTab('icc')">🏷️ ICC Коди</button>
+            <button class="tab-btn" onclick="showLiderTab('users')">👥 Користувачі</button>
+        </div>
+
+        <!-- Таб палет -->
+        <div id="lider-pallets" class="admin-tab-content fade-in">
+            <h2>📦 Інформація про палети</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>🏷️ Номер</th>
+                            <th>🔢 ICC</th>
+                            <th>📋 Тип</th>
+                            <th>📦 Картонів</th>
+                            <th>👤 Користувач</th>
+                            <th>📊 Статус</th>
+                            <th>📅 Створено</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pallets-table-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">
+                                <div class="spinner"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Таб ICC кодів -->
+        <div id="lider-icc" class="admin-tab-content" style="display: none;">
+            <h2>🏷️ ICC Коди</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>🔢 ICC Код</th>
+                            <th>📋 Тип</th>
+                            <th>📊 Прогрес</th>
+                            <th>📦 Картонів</th>
+                            <th>✅ Статус</th>
+                            <th>📅 Створено</th>
+                        </tr>
+                    </thead>
+                    <tbody id="icc-table-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                <div class="spinner"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Таб користувачів -->
+        <div id="lider-users" class="admin-tab-content" style="display: none;">
+            <h2>👥 Активність користувачів</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>👤 Логін</th>
+                            <th>🎭 Роль</th>
+                            <th>📦 Картонів всього</th>
+                            <th>📅 Дата реєстрації</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 2rem;">
+                                <div class="spinner"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Легенда для типів -->
+        <div style="margin-top: 2rem; background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="margin-bottom: 1rem;">📋 Легенда типів</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <span style="padding: 0.5rem 1rem; background: #4285F4; color: white; border-radius: 8px; font-weight: 600;">🔵 Single</span>
+                <span style="padding: 0.5rem 1rem; background: #9C27B0; color: white; border-radius: 8px; font-weight: 600;">🟣 Mix</span>
+                <span style="padding: 0.5rem 1rem; background: #0F9D58; color: white; border-radius: 8px; font-weight: 600;">🟢 Vevor</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='lider.js') }}"></script>
+</body>
+</html>

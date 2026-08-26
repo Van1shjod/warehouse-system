@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Dashboard - Warehouse System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <h2>Warehouse System</h2>
+            <div class="nav-right">
+                <span class="username">{{ user['username'] }}</span>
+                {% if user['role'] == 'admin' %}
+                    <a href="/admin" class="btn btn-small">Адмін</a>
+                {% endif %}
+                <a href="/logout" class="btn btn-small btn-danger">Вихід</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Головна кнопка (без статистики) -->
+        <div class="main-actions" style="margin-top: 3rem;">
+            <button class="btn btn-large btn-primary" onclick="showSortMenu()">SORT</button>
+        </div>
+
+        <!-- Меню вибору типу -->
+        <div id="sort-menu" class="modal">
+            <div class="modal-content fade-in">
+                <h2>Виберіть тип</h2>
+                <div class="type-buttons">
+                    <button class="btn btn-large btn-type" onclick="selectType('single')">Single</button>
+                    <button class="btn btn-large btn-type" onclick="selectType('mix')">Mix</button>
+                    <button class="btn btn-large btn-type" onclick="selectType('vevor')">Vevor</button>
+                </div>
+                <button class="btn btn-secondary" onclick="closeSortMenu()">Скасувати</button>
+            </div>
+        </div>
+
+        <!-- Робоча область -->
+        <div id="work-area" style="display: none;">
+            <div class="work-card fade-in">
+                <div class="work-header">
+                    <h2>Тип: <span id="current-type"></span></h2>
+                    <button class="btn btn-danger" onclick="closeWorkArea()">Завершити</button>
+                </div>
+
+                <!-- Введення ICC коду -->
+                <div id="icc-input-section">
+                    <div class="form-group">
+                        <label>Введіть останні 4 цифри ICC коду</label>
+                        <input type="text" id="icc-code-input" placeholder="Наприклад: 1234" autocomplete="off" autofocus maxlength="4" pattern="[0-9]*" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Створення нового ICC -->
+                <div id="new-icc-section" style="display: none;">
+                    <h3>Новий ICC код</h3>
+                    <div class="form-group" id="total-cartons-group">
+                        <label>Скільки має бути картонів всього?</label>
+                        <input type="number" id="total-cartons-input" min="1" placeholder="Введіть кількість" autofocus>
+                    </div>
+                </div>
+
+                <!-- Робота з існуючим ICC -->
+                <div id="existing-icc-section" style="display: none;">
+                    <div class="icc-info">
+                        <h3>ICC: <span id="display-icc-code"></span></h3>
+                        <div class="progress-info">
+                            <p>Картонів: <strong><span id="current-cartons">0</span> / <span id="total-cartons">0</span></strong></p>
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                        </div>
+                        <div id="completion-badge" class="completion-badge" style="display: none;">
+                            <span class="checkmark">✓</span>
+                            <span>ГОТОВО</span>
+                        </div>
+                    </div>
+
+                    <!-- Відображення поточної локації -->
+                    <div id="pallet-location-info" style="display: none; margin-bottom: 1rem;">
+                        <p style="background: #fff3cd; padding: 1rem; border-radius: 8px; font-weight: 600; font-size: 1.2rem; text-align: center;">
+                            📍 Локація палети: <strong style="color: #ff6b00;"><span id="pallet-location-display"></span></strong>
+                        </p>
+                    </div>
+
+                    <!-- Крок 1: Введення кількості (спочатку) -->
+                    <div id="cartons-input-group">
+                        <div class="form-group">
+                            <label>Крок 1: Скільки картонів є зараз?</label>
+                            <input type="number" id="current-cartons-input" min="1" placeholder="Введіть кількість" autofocus>
+                        </div>
+                    </div>
+
+                    <!-- Крок 2: Введення номера нової палети (якщо потрібно) -->
+                    <div id="location-input-group" style="display: none;">
+                        <div class="form-group">
+                            <label>Крок 2: Номер нової палети</label>
+                            <input type="text" id="new-pallet-number-input" placeholder="Сканируйте або введіть номер палети" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- Крок 3: Підтвердження локації (в останню чергу) -->
+                    <div id="pallet-confirm-group" style="display: none;">
+                        <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+                            <h3 style="color: #1976d2; margin-bottom: 1rem;">⚠️ ПІДТВЕРДЖЕННЯ ЛОКАЦІЇ</h3>
+                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Відсканируйте штрих-код палети:</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: #ff6b00;"><span id="pallet-confirm-display"></span></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Останній крок: Сканування номера палети</label>
+                            <input type="text" id="pallet-confirm-input" placeholder="Відсканируйте номер палети" autocomplete="off" autofocus>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userId = {{ user['id'] }};
+        const userRole = "{{ user['role'] }}";
+    </script>
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>
